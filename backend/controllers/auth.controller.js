@@ -23,6 +23,21 @@ const storeRefreshToken = async (userId, refreshToken) => {
   ); // 7 days
 };
 
+const setCookies = (res, accessToken, refreshToken) => {
+  res.cookie("accessToken", accessToken, {
+    httpOnly: true, // XSS attacks prevention, cross-site scripting attack
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict", // prevents CSRF attack, cross-site request forgery attack
+    maxAge: 15 * 60 * 1000, // 15 minutes
+  });
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+};
+
 export const signup = async (req, res) => {
   const { email, password, name } = req.body;
 
@@ -38,9 +53,17 @@ export const signup = async (req, res) => {
     const { accessToken, refreshToken } = generateTokens(user._id);
     await storeRefreshToken(user._id, refreshToken);
 
-    // setCookies(res, accessToken, refreshToken);
+    setCookies(res, accessToken, refreshToken);
 
-    res.status(201).json({ user, message: "User created successfully" });
+    res.status(201).json({
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+      message: "User created successfully",
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
