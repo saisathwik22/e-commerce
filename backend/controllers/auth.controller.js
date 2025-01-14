@@ -2,6 +2,7 @@ import { redis } from "../lib/redis.js";
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 
+/* Token Generation */
 const generateTokens = (userId) => {
   const accessToken = jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: "15m",
@@ -14,6 +15,7 @@ const generateTokens = (userId) => {
   return { accessToken, refreshToken };
 };
 
+/* Storing Refresh Token */
 const storeRefreshToken = async (userId, refreshToken) => {
   await redis.set(
     `refresh_token:${userId}`,
@@ -23,6 +25,7 @@ const storeRefreshToken = async (userId, refreshToken) => {
   ); // 7 days
 };
 
+/* SET COOKIES */
 const setCookies = (res, accessToken, refreshToken) => {
   res.cookie("accessToken", accessToken, {
     httpOnly: true, // XSS attacks prevention, cross-site scripting attack
@@ -38,6 +41,7 @@ const setCookies = (res, accessToken, refreshToken) => {
   });
 };
 
+/* SIGN-UP */
 export const signup = async (req, res) => {
   const { email, password, name } = req.body;
 
