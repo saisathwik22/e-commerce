@@ -155,4 +155,4 @@ export const refreshToken = async (req, res) => {
   }
 };
 
-/* GET Profile TODO */
+/* TODO: implement GET Profile */
