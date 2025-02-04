@@ -2,7 +2,7 @@ import { redis } from "../lib/redis.js";
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 
-/* Token Generation */
+// token generation
 const generateTokens = (userId) => {
   const accessToken = jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, {
     expiresIn: "15m",
@@ -15,7 +15,7 @@ const generateTokens = (userId) => {
   return { accessToken, refreshToken };
 };
 
-/* Storing Refresh Token */
+// storing refresh token
 const storeRefreshToken = async (userId, refreshToken) => {
   await redis.set(
     `refresh_token:${userId}`,
@@ -25,7 +25,7 @@ const storeRefreshToken = async (userId, refreshToken) => {
   ); // 7 days
 };
 
-/* SET COOKIES */
+// set cookies
 const setCookies = (res, accessToken, refreshToken) => {
   res.cookie("accessToken", accessToken, {
     httpOnly: true, // XSS attacks prevention, cross-site scripting attack
@@ -41,7 +41,6 @@ const setCookies = (res, accessToken, refreshToken) => {
   });
 };
 
-/* SIGN-UP */
 export const signup = async (req, res) => {
   const { email, password, name } = req.body;
 
@@ -74,7 +73,6 @@ export const signup = async (req, res) => {
   }
 };
 
-/* LOGIN */
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -99,7 +97,6 @@ export const login = async (req, res) => {
   }
 };
 
-/* LOGOUT */
 export const logout = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
@@ -120,7 +117,6 @@ export const logout = async (req, res) => {
   }
 };
 
-// this will refresh the access token.
 export const refreshToken = async (req, res) => {
   try {
     const refreshToken = req.cookies.refreshToken;
@@ -155,4 +151,10 @@ export const refreshToken = async (req, res) => {
   }
 };
 
-/* TODO: implement GET Profile */
+export const getProfile = async (req, res) => {
+  try {
+    res.json(req.user);
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
