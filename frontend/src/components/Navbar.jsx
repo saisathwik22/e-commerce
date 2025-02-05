@@ -11,7 +11,7 @@ const Navbar = () => {
         <div className='flex flex-wrap justify-between items-center '>
           <Link
             to='/'
-            className='text-3xl font-mono font-bold text-emerald-400 items-center space-x-2 flex '
+            className='text-3xl font-mono font-semibold text-white items-center space-x-2 flex '
           >
             buynow.com
           </Link>
@@ -19,7 +19,7 @@ const Navbar = () => {
           <nav className='flex flex-wrap items-center gap-4'>
             <Link
               to={"/"}
-              className='text-gray-100 hover:text-emerald-400 font-semibold transition duration-300 ease-in-out'
+              className='text-gray-100 hover:text-emerald-400 font-semibold  transition duration-300 ease-in-out'
             >
               Home
             </Link>
